@@ -15,8 +15,8 @@ public class fileStorageSystem {
         return true;
     }
 
-    public void storeData(ArrayList<String> arrayOfData, String fileName) throws IOException {
-        FileOutputStream ofstream = new FileOutputStream(fileName);
+    public void storeData(ArrayList<String> arrayOfData, String fileName, boolean IsAppendable) throws IOException {
+        FileOutputStream ofstream = new FileOutputStream(fileName,IsAppendable);
         for (String data : arrayOfData){
             for (int i = 0; i < data.length();i++){
                 ofstream.write(data.charAt(i));
