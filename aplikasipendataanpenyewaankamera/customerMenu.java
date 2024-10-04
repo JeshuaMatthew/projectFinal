@@ -10,28 +10,32 @@ public class customerMenu {
     private int selectedIndex;
 
     public ArrayList<String>placeOrder(ArrayList<String>customerData, ArrayList<String>stockData){
-        showData(stockData);
+        showStockData(stockData);
         System.out.print("Masukan Nomor Barang Yang Ingin Di Sewa : ");
 
         selectedIndex = scanner.nextInt() - 1;
         if(isIndexValid(stockData)){
             String data = saveCustomerData(stockData);
             customerData.add(data);
+        }else {
+            System.out.println("Mohon Maaf Nomor Kamera Yang Anda Input Tidak Tersedia");
+            return customerData;
         }
         return customerData;
     }
 
     public ArrayList<String> subtractStock(ArrayList<String> objectData){
-        String selectedObjectData = objectData.get(selectedIndex);
+        if(isIndexValid(objectData)){
+            String selectedObjectData = objectData.get(selectedIndex);
 
-        int objectStock = Integer.parseInt(getSpecificData(selectedObjectData,2,3));
+            int objectStock = Integer.parseInt(getSpecificData(selectedObjectData,2,3));
 
-        objectStock -= rentAmount;
+            objectStock -= rentAmount;
 
-        selectedObjectData = selectedObjectData.substring(0,getSpecificDataLocation(selectedObjectData,2)).concat(Integer.toString(objectStock).concat(","));
+            selectedObjectData = selectedObjectData.substring(0,getSpecificDataLocation(selectedObjectData,2)).concat(Integer.toString(objectStock).concat(","));
 
-        objectData.set(selectedIndex,selectedObjectData);
-
+            objectData.set(selectedIndex,selectedObjectData);
+        }
         return objectData;
     }
 
@@ -61,6 +65,7 @@ public class customerMenu {
         String price = getSpecificData(objekData.get(selectedIndex),1,2);
 
         System.out.print("Masukan nama Anda : ");
+        scanner.nextLine();
         String customerName =  scanner.nextLine();
 
         System.out.print("Masukan Tipe Surat Jaminan Anda : ");
@@ -75,10 +80,14 @@ public class customerMenu {
         return formatTable(customerName,objekName, rentAmount,suratJaminan,rentDays,price);
     }
 
-    private void showData(ArrayList<String>Data){
+    private void showStockData(ArrayList<String>Data){
         int counter = 1;
+        System.out.println(String.format("%2s %6s %10s %7s","NO.","NAMA" ,"HARGA" ,"STOK"));
         for (String data : Data){
-            System.out.println(counter +  ". " + data);
+            String name = getSpecificData(data,0,1);
+            String price = getSpecificData(data,1,2);
+            String stock = getSpecificData(data,2,3);
+            System.out.println(String.format("%1s %10s %8s %5s",counter,name,price,stock));
             counter++;
         }
     }

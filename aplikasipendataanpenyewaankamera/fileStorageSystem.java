@@ -8,28 +8,10 @@ import java.util.ArrayList;
 
 public class fileStorageSystem {
 
-    public boolean addDirectory(File directoryName){
-        if(!directoryName.exists()){
-            return directoryName.mkdirs();
-        }
-        return true;
-    }
-
-    public void storeData(ArrayList<String> arrayOfData, String fileName, boolean IsAppendable) throws IOException {
-        FileOutputStream ofstream = new FileOutputStream(fileName,IsAppendable);
-        for (String data : arrayOfData){
-            for (int i = 0; i < data.length();i++){
-                ofstream.write(data.charAt(i));
-            }
-            ofstream.write('\n');
-        }
-        ofstream.close();
-    }
-
-    public void resetRecord(String fileName)throws IOException{
-        FileOutputStream ofstream = new FileOutputStream(fileName);
-        ofstream.close();
-    }
+    private File stockDirectory = new File("stockDirectory");
+    private File customerDirectory = new File("customerDirectory");
+    private File stockFile = new File("stockDirectory/stockRecords.txt");
+    private File customerFile = new File("customerDirectory/customerRecords.txt");
 
 
     public ArrayList<String> getRecords(String fileName)throws IOException{
@@ -38,8 +20,8 @@ public class fileStorageSystem {
         int dataBytes;
         StringBuilder dataLine = new StringBuilder();
         while ((dataBytes = ifstream.read()) != -1){
-            if(dataBytes != 10) { // \n == 10
-                dataLine.append(dataBytes);
+            if((char)dataBytes != '\n') { // \n == 10
+                dataLine.append((char) dataBytes);
             }else{
                 records.add(dataLine.toString());
                 dataLine.setLength(0); // clears dataline
@@ -47,5 +29,40 @@ public class fileStorageSystem {
         }
         ifstream.close();
         return records;
+    }
+
+    public void createNecessaryDirectory()throws IOException{
+        addDirectory(customerDirectory);
+        addDirectory(stockDirectory);
+        addFile(customerFile);
+        addFile(stockFile);
+    }
+
+    public void storeCustomerStockData(ArrayList<String>customerData, ArrayList<String>stockData)throws IOException{
+        storeData(stockData,stockFile);
+        storeData(customerData,customerFile);
+    }
+
+    private void addDirectory(File directoryName){
+        if(!directoryName.exists()){
+            directoryName.mkdirs();
+        }
+    }
+
+    private void addFile(File fileName)throws IOException{
+        if(!fileName.exists()){
+            fileName.createNewFile();
+        }
+    }
+
+    private void storeData(ArrayList<String> arrayOfData, File fileName) throws IOException {
+        FileOutputStream ofstream = new FileOutputStream(fileName);
+        for (String data : arrayOfData){
+            for (int i = 0; i < data.length();i++){
+                ofstream.write(data.charAt(i));
+            }
+            ofstream.write('\n');
+        }
+        ofstream.close();
     }
 }
