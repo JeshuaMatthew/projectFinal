@@ -89,6 +89,21 @@ public class AdminMenu {
         }
     }
 
+    private void showCustomerData(ArrayList<String> customerData){
+        int counter = 1;
+        System.out.println("NO.\t NAMA\t NAMA-BARANG\t JUMLAH-SEWA\t SURAT-JAMINAN\t TANGGAL-PENYEWAAN\t TANGGAL-PENGEMBALIAN");
+        for(String data : customerData){
+            String customerName = getSpecificData(data, 0, 1);
+            String objectName = getSpecificData(data, 1, 2);
+            String rentAmount = getSpecificData(data, 2, 3);
+            String suratJaminan = getSpecificData(data, 3, 4);
+            String rentDate = getSpecificData(data, 4, 5);
+            String returnDate = getSpecificData(data, 5, 6);
+
+            System.out.println(counter + ". " + customerName + "\t" + objectName + "\t" + rentAmount + "\t" + suratJaminan + "\t" + rentDate + "\t" + returnDate);
+        }
+    }
+
     private int getSpecificDataLocation(String data, int dataType){
         int countCommas = 0;
         int counter = 0;

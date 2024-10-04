@@ -1,37 +1,31 @@
 package aplikasipendataanpenyewaankamera;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 
 public class Main {
-    public static Scanner input = new Scanner(System.in);
-
     public static void main(String[] args) throws IOException {
-
         fileStorageSystem manageFile = new fileStorageSystem();
-
         AdminMenu admin = new AdminMenu();
-
-        customerMenu customer = new customerMenu();
-
-        manageFile.createNecessaryDirectory();
-
-        ArrayList<String> stokData = manageFile.getRecords("stockDirectory/stockRecords.txt");
-
-        ArrayList<String> customerData = manageFile.getRecords("customerDirectory/customerRecords.txt");
-
+        ArrayList<String> stokData = manageFile.getRecords("stokdata.txt");
+        ArrayList<String> costumerData = manageFile.getRecords("costumerdata.txt");
         while (true) {
-            showMenu();
+            System.out.println("Aplikasi pendataan Sewa Kamera");
+            System.out.println("Silahkan pilih login sebagai :");
+            System.out.println("1. Admin");
+            System.out.println("2. Pengguna");
+            Scanner input = new Scanner(System.in);
+
             int pilihan = input.nextInt();
             switch (pilihan) {
                 case 1:
-                    stokData = admin.bukaMenu(stokData,customerData);
+                    stokData = admin.bukaMenu(stokData);
                     break;
 
                 case 2:
-                    customerData = customer.placeOrder(customerData,stokData);
-                    stokData = customer.subtractStock(stokData);
+                    //showemenu
                     break;
 
                 case 3:
@@ -41,15 +35,8 @@ public class Main {
                 default:
                     System.out.println("PIlihan yang anda masukan!");
             }
-            manageFile.storeCustomerStockData(customerData,stokData);
+            manageFile.storeData(costumerData, "costumerdata.txt", false);
+            manageFile.storeData(stokData, "stokdata.txt", false);
         }
-    }
-
-    private static void showMenu() {
-        System.out.println("Aplikasi pendataan Sewa Kamera");
-        System.out.println("Silahkan pilih login sebagai :");
-        System.out.println("1. Admin");
-        System.out.println("2. Pengguna");
-        System.out.print("Masukan Pilihan Anda : ");
     }
 }
