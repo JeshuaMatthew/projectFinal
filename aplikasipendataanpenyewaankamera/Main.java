@@ -21,7 +21,7 @@ public class Main {
             int pilihan = input.nextInt();
             switch (pilihan) {
                 case 1:
-                    stokData = admin.bukaMenu(stokData);
+                    stokData = admin.bukaMenu(stokData,costumerData);
                     break;
 
                 case 2:

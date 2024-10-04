@@ -14,10 +14,11 @@ public class AdminMenu {
         System.out.println("1. Tambah Stok Barang");
         System.out.println("2. Edit Stok Barang");
         System.out.println("3. Hapus Stok Barang");
-        System.out.println("4. Lihat Stok Barang");
+        System.out.println("4. Lihat Data Pelanggan Barang");
+        System.out.println("5. exit");
     }
 
-    public ArrayList<String> bukaMenu(ArrayList<String> stokData){
+    public ArrayList<String> bukaMenu(ArrayList<String> stokData, ArrayList<String> customerData){
         showStok(stokData);
         showMenu();
         System.out.println("Masukan pilihan anda: ");
@@ -32,7 +33,11 @@ public class AdminMenu {
             case 3:
                 stokData = hapusStok(stokData);
                 break;
+
             case 4:
+                showCustomerData(customerData);
+                break;
+            case 5:
                 return stokData;
             default:
                 System.out.println("Angka yang anda masukan tidak sesuai!");
@@ -62,6 +67,21 @@ public class AdminMenu {
             String stok = getSpecificData(data, 2, 3);
 
             System.out.println(counter + ". " + nama + "\t" + harga + "\t" + stok);
+        }
+    }
+
+    private void showCustomerData(ArrayList<String> customerData){
+        int counter = 1;
+        System.out.println("NO.\t NAMA\t NAMA-BARANG\t JUMLAH-SEWA\t SURAT-JAMINAN\t TANGGAL-PENYEWAAN\t TANGGAL-PENGEMBALIAN");
+        for(String data : customerData){
+            String customerName = getSpecificData(data, 0, 1);
+            String objectName = getSpecificData(data, 1, 2);
+            String rentAmount = getSpecificData(data, 2, 3);
+            String suratJaminan = getSpecificData(data, 3, 4);
+            String rentDate = getSpecificData(data, 4, 5);
+            String returnDate = getSpecificData(data, 5, 6);
+
+            System.out.println(counter + ". " + customerName + "\t" + objectName + "\t" + rentAmount + "\t" + suratJaminan + "\t" + rentDate + "\t" + returnDate);
         }
     }
 
