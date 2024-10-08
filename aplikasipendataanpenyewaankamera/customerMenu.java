@@ -9,60 +9,108 @@ public class customerMenu {
     private int rentAmount;
     private int selectedIndex;
 
-    public ArrayList<String>placeOrder(ArrayList<String>customerData, ArrayList<String>stockData){
-        showStockData(stockData);
-        System.out.print("Masukan Nomor Barang Yang Ingin Di Sewa : ");
-
-        selectedIndex = scanner.nextInt() - 1;
-        if(isIndexValid(stockData)){
-            String data = saveCustomerData(stockData);
-            customerData.add(data);
-        }else {
-            System.out.println("Mohon Maaf Nomor Kamera Yang Anda Input Tidak Tersedia");
-            return customerData;
-        }
-        return customerData;
+    private void showMenu(){
+        System.out.println("SELAMAT DATANG DI MENU PELANGGAN :\n");
+        System.out.println("1.Sewa Kamera / Lensa ");
+        System.out.println("2.Keluar Menu");
+        System.out.print("Masukan Pilihan Anda : ");
     }
 
-    public ArrayList<String> subtractStock(ArrayList<String> objectData){
-        if(isIndexValid(objectData)){
-            String selectedObjectData = objectData.get(selectedIndex);
-
-            int objectStock = Integer.parseInt(getSpecificData(selectedObjectData,2,3));
-
-            objectStock -= rentAmount;
-
-            selectedObjectData = selectedObjectData.substring(0,getSpecificDataLocation(selectedObjectData,2)).concat(Integer.toString(objectStock).concat(","));
-
-            objectData.set(selectedIndex,selectedObjectData);
-        }
-        return objectData;
-    }
-
-    private int getSpecificDataLocation(String data, int dataType){
-        int countCommas = 0;
-        int counter = 0;
-        while (countCommas != dataType){
-            if(data.charAt(counter) == ','){
-                countCommas++;
+    public void bukaMenu(){
+        while(true){
+        showMenu();
+        int pilihan = scanner.nextInt();
+            switch (pilihan){
+                case 1:
+                    showStockData();
+                    placeOrder();
+                    break;
+                case 2:
+                    return;
+                default:
+                    System.out.println("Menu Yang Anda Pilih Tidak Tersedia !");
             }
-            counter++;
         }
-        return counter;
     }
+
+
+
+    private void placeOrder(){
+
+        System.out.print("Masukan Nomor Kamera / Lensa Yang Ingin Di Sewa : ");
+        selectedIndex = scanner.nextInt() - 1;
+        if (displayMessageIfNumberIsNotAvailable()) return;
+
+        System.out.print("Masukan Jumlah Yang Ingin Anda Sewa : ");
+        rentAmount =  scanner.nextInt();
+        if (displayMessageIfStockIsSmallerThanRent()) return;
+
+        if(isIndexValid(fileStorageSystem.dataStock) && isRentSumSmallerThanStock()){
+            addNewCustomerData();
+            updateStock();
+        }
+    }
+
+    private boolean displayMessageIfStockIsSmallerThanRent() {
+        if (!isRentSumSmallerThanStock()){
+            System.out.println("Maaf Jumlah Kamera / Lensa Yang Anda Pesan Melebihi Stok Yang Tersedia !");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean displayMessageIfNumberIsNotAvailable() {
+        if (!isIndexValid(fileStorageSystem.dataStock)){
+            System.out.println("Mohon Maaf Nomor Kamera / Lensa Yang Anda Input Tidak Tersedia !");
+            return true;
+        }
+        return false;
+    }
+
+    private void addNewCustomerData() {
+        String data = inputCustomerData();
+        fileStorageSystem.dataCustomer.add(data);
+    }
+
+    private int getCurrentObjectStockAmount(){
+        return Integer.parseInt(fileStorageSystem.getSpecificData(
+                fileStorageSystem.dataStock.get(selectedIndex),2));
+    }
+
+    private boolean isRentSumSmallerThanStock(){
+        return getCurrentObjectStockAmount() >= rentAmount;
+    }
+
+    private void updateStock(){
+        String selectedObjectData = fileStorageSystem.dataStock.get(selectedIndex);
+
+        int objectStock = getCurrentObjectStockAmount();
+
+        objectStock -= rentAmount;
+
+        subtractStock(objectStock, selectedObjectData);
+    }
+
+    private void subtractStock(int objectStock, String selectedObjectData) {
+        if(objectStock <= 0){
+            fileStorageSystem.dataStock.remove(selectedIndex);
+        }else{
+            selectedObjectData = selectedObjectData.substring(0,fileStorageSystem.getSpecificDataLocation(
+                    selectedObjectData,2)).concat(Integer.toString(objectStock).concat(">"));
+            fileStorageSystem.dataStock.set(selectedIndex,selectedObjectData);
+        }
+    }
+
 
     private boolean isIndexValid(ArrayList<String>objectData){
         return selectedIndex < objectData.size() && selectedIndex >= 0;
     }
 
-    private String getSpecificData(String data, int dataBeginingLocation, int dataEndLocation ) {
-        return data.substring(getSpecificDataLocation(data,dataBeginingLocation),getSpecificDataLocation(data,dataEndLocation) -1);
-    }
 
-    private String saveCustomerData(ArrayList<String> objekData){
+    private String inputCustomerData(){
 
-        String objekName = getSpecificData(objekData.get(selectedIndex),0,1);
-        String price = getSpecificData(objekData.get(selectedIndex),1,2);
+        String objekName = fileStorageSystem.getSpecificData(fileStorageSystem.dataStock.get(selectedIndex),0);
+        String price = fileStorageSystem.getSpecificData(fileStorageSystem.dataStock.get(selectedIndex),1);
 
         System.out.print("Masukan nama Anda : ");
         scanner.nextLine();
@@ -71,23 +119,24 @@ public class customerMenu {
         System.out.print("Masukan Tipe Surat Jaminan Anda : ");
         String suratJaminan =  scanner.nextLine();
 
-        System.out.print("Masukan Jumlah Yang Ingin Anda Sewa : ");
-        rentAmount =  scanner.nextInt();
-
         System.out.print("Masukan Jumlah Hari Anda Menyewa Kamera : ");
         int rentDays =  scanner.nextInt();
 
         return formatTable(customerName,objekName, rentAmount,suratJaminan,rentDays,price);
     }
 
-    private void showStockData(ArrayList<String>Data){
+    private void showStockData(){
+        System.out.format("%2s %6s %10s %7s","NO.","NAMA" ,"HARGA" ,"STOK\n");
+        bacaDanTulisDataStock();
+    }
+
+    private static void bacaDanTulisDataStock() {
         int counter = 1;
-        System.out.println(String.format("%2s %6s %10s %7s","NO.","NAMA" ,"HARGA" ,"STOK"));
-        for (String data : Data){
-            String name = getSpecificData(data,0,1);
-            String price = getSpecificData(data,1,2);
-            String stock = getSpecificData(data,2,3);
-            System.out.println(String.format("%1s %10s %8s %5s",counter,name,price,stock));
+        for (String data : fileStorageSystem.dataStock){
+            String name = fileStorageSystem.getSpecificData(data,0);
+            String price = fileStorageSystem.getSpecificData(data,1);
+            String stock = fileStorageSystem.getSpecificData(data,2);
+            System.out.format("%1s %10s %8s %5s\n",counter,name,price,stock);
             counter++;
         }
     }
@@ -101,10 +150,6 @@ public class customerMenu {
     }
 
     private String formatTable(String customerName,String objekName,int objekAmount, String suratJaminan, int rentDays ,String price){
-        return customerName + "," + objekName + "," + objekAmount + "," + price +  "," + suratJaminan + "," + getCurrentDate() + "," + getReturnDate(rentDays) + ",";
+        return customerName + ">" + objekName + ">" + objekAmount + ">" + price +  ">" + suratJaminan + ">" + getCurrentDate() + ">" + getReturnDate(rentDays) + ">";
     }
 }
-
-// namapenyewa,namakamera,banyaksewakamera,surat Jaminan,tanggalpenyewaan,tanggalpengembalian,
-// namakamera,harga,stokKamera,
-// lensa,harga,stokLensa,
