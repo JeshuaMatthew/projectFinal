@@ -6,126 +6,150 @@ import java.util.Scanner;
 public class AdminMenu {
     Scanner input = new Scanner(System.in);
     private String formatData(String namaBarang, int hargaBarang, int stokBarang){
-        return namaBarang + "," + hargaBarang + "," + stokBarang + ",";
+        return namaBarang + ">" + hargaBarang + ">" + stokBarang + ">";
     }
 
     private void showMenu(){
         System.out.println("=============================================");
-        System.out.println("Berikut adalah menu Admin :");
+        System.out.println("SELAMAT DATANG DI MENU ADMIN : \n");
         System.out.println("1. Tambah Stok Barang");
         System.out.println("2. Edit Stok Barang");
         System.out.println("3. Hapus Stok Barang");
         System.out.println("4. Lihat Data Pelanggan Barang");
-        System.out.println("5. exit");
+        System.out.println("5. Exit");
     }
 
-    public ArrayList<String> bukaMenu(ArrayList<String> stokData, ArrayList<String> customerData){
-        showStok(stokData);
-        showMenu();
-        System.out.print("Masukan pilihan anda: ");
-        int pilihan = input.nextInt();
-        switch (pilihan){
-            case 1:
-                stokData = tambahStok(stokData);
-                break;
-            case 2:
-                stokData = editStok(stokData);
-                break;
-            case 3:
-                stokData = hapusStok(stokData);
-                break;
+    public void bukaMenu(){
+        while (true){
+            showStok();
+            showMenu();
+            System.out.print("Masukan Pilihan Anda: ");
+            int pilihan = input.nextInt();
+            switch (pilihan){
+                case 1:
+                    menuTambahStock();
+                    break;
+                case 2:
+                    menuEditStock();
+                    break;
+                case 3:
+                    menuHapusStock();
+                    break;
 
-            case 4:
-                showCustomerData(customerData);
-                break;
-            case 5:
-                return stokData;
-            default:
-                System.out.println("Angka yang anda masukan tidak sesuai!");
+                case 4:
+                    showCustomerData();
+                    break;
+                case 5:
+                    return;
+                default:
+                    System.out.println("Menu Yang Anda Masukan Tidak Tersedia !");
+            }
         }
-        return stokData;
     }
 
-    public ArrayList<String> tambahStok(ArrayList<String> stokData){
-        showStok(stokData);
-        System.out.print("Masukan nama barang: ");
+    private void menuTambahStock(){
+        showStok();
+        String formatedData = tambahStock();
+        fileStorageSystem.dataStock.add(formatedData);
+    }
+
+    private String tambahStock() {
+        System.out.print("Masukan Nama Barang: ");
         input.nextLine();
         String namaBarang = input.nextLine();
-        System.out.print("Masukan harga barang: ");
+        System.out.print("Masukan Harga Sewa: ");
         int hargaBarang = input.nextInt();
-        System.out.print("Masukan stok barang: ");
+        System.out.print("Masukan Stock Barang: ");
         int stokBarang = input.nextInt();
-        String formatedData = formatData(namaBarang, hargaBarang, stokBarang);
-        stokData.add(formatedData);
-        return stokData;
+        return formatData(namaBarang, hargaBarang, stokBarang);
     }
 
-    private void showStok(ArrayList<String> stokData){
+
+    private void showStok(){
+        if(fileStorageSystem.dataStock.isEmpty()){
+            System.out.println("Stock Saat Ini Belum Tersedia");
+        } else{
+            System.out.format("%2s %6s %10s %7s","NO.","NAMA" ,"HARGA" ,"STOK\n");
+            bacaDanTampilakanStock();
+        }
+
+    }
+
+    private static void bacaDanTampilakanStock() {
         int counter = 1;
-        System.out.println(String.format("%2s %6s %10s %7s","NO.","NAMA" ,"HARGA" ,"STOK"));
-        for(String data:stokData){
-            String nama = getSpecificData(data, 0, 1);
-            String harga = getSpecificData(data, 1, 2);
-            String stok = getSpecificData(data, 2, 3);
-            System.out.println(String.format("%1s %10s %8s %5s",counter,nama,harga,stok));
+        for(String data: fileStorageSystem.dataStock){
+            String nama = fileStorageSystem.getSpecificData(data, 0);
+            String harga = fileStorageSystem.getSpecificData(data, 1);
+            String stok = fileStorageSystem.getSpecificData(data, 2);
+            System.out.format("%1s %10s %8s %5s\n", counter,nama,harga,stok);
             counter++;
         }
     }
 
-    private void showCustomerData(ArrayList<String> customerData){
+    private void showCustomerData(){
+        if(fileStorageSystem.dataCustomer.isEmpty()){
+            System.out.println("Saat Ini Masih Belum Ada Pemesanan");
+        }else{
+            bacaDanTampilkanDataPelanggan();
+        }
+    }
+
+    private static void bacaDanTampilkanDataPelanggan() {
         int counter = 1;
-
-        System.out.println(String.format("%2s %8s %13s %5s %8s %15s %15s %15s","NO.","NAMA", "NAMA-BARANG","JUMLAH-SEWA","HARGA","SURAT-JAMINAN","TANGGAL-PENYEWAAN","TANGGAL-PENGEMBALIAN"));
-        for(String data : customerData){
-            String customerName = getSpecificData(data, 0, 1);
-            String objectName = getSpecificData(data, 1, 2);
-            String rentAmount = getSpecificData(data, 2, 3);
-            String price = getSpecificData(data, 3, 4);
-            String suratJaminan = getSpecificData(data, 4, 5);
-            String rentDate = getSpecificData(data, 5, 6);
-            String returnDate = getSpecificData(data, 6, 7);
-            System.out.println( String.format("%2s %10s %10s %6s %15s %10s %20s %18s",counter,customerName,objectName,rentAmount,price,suratJaminan,rentDate,returnDate));
+        System.out.format("%2s %8s %13s %5s %8s %15s %15s %15s","NO.","NAMA", "NAMA-BARANG","JUMLAH-SEWA","HARGA","SURAT-JAMINAN","TANGGAL-PENYEWAAN","TANGGAL-PENGEMBALIAN\n");
+        for(String data : fileStorageSystem.dataCustomer){
+            String customerName = fileStorageSystem.getSpecificData(data, 0);
+            String objectName = fileStorageSystem.getSpecificData(data, 1);
+            String rentAmount = fileStorageSystem.getSpecificData(data, 2);
+            String price = fileStorageSystem.getSpecificData(data, 3);
+            String suratJaminan = fileStorageSystem.getSpecificData(data, 4);
+            String rentDate = fileStorageSystem.getSpecificData(data, 5);
+            String returnDate = fileStorageSystem.getSpecificData(data, 6);
+            System.out.format("%2s %10s %10s %6s %15s %10s %20s %18s\n",counter,customerName,objectName,rentAmount,price,suratJaminan,rentDate,returnDate);
             counter++;
         }
     }
 
-    private int getSpecificDataLocation(String data, int dataType){
-        int countCommas = 0;
-        int counter = 0;
-        while (countCommas != dataType){
-            if(data.charAt(counter) == ','){
-                countCommas++;
-            }
-            counter++;
+    private boolean isIndexValid(ArrayList<String>objectData, int selectedIndex){
+        return selectedIndex < objectData.size() && selectedIndex >= 0;
+    }
+
+    private void menuEditStock(){
+        showStok();
+        System.out.print("Masukan Nomor Baris Data Yang Ingin Di Edit: ");
+        editStock();
+
+    }
+
+    private void editStock() {
+        int indexData = input.nextInt() - 1;
+        if(isIndexValid(fileStorageSystem.dataStock,indexData)){
+            System.out.print("Masukan Nama Barang Yang Baru: ");
+            String dataBaru = input.nextLine();
+            System.out.print("Masukan Harga Sewa Barang Yang Baru: ");
+            int hargaBaru = input.nextInt();
+            System.out.print("Masukan stok Barang Yang Baru: ");
+            int stokBaru = input.nextInt();
+            String editedData = formatData(dataBaru, hargaBaru, stokBaru);
+            fileStorageSystem.dataStock.set(indexData, editedData);
+        }else {
+            System.out.println("Data Stok Yang Anda Pilih Tidak Tersedia !");
         }
-        return counter;
     }
 
-    private String getSpecificData(String data, int dataBeginingLocation, int dataEndLocation ) {
-        return data.substring(getSpecificDataLocation(data,dataBeginingLocation),getSpecificDataLocation(data,dataEndLocation)-1);
+
+    public void menuHapusStock(){
+        showStok();
+        System.out.print("Masukan Nomor Baris Data Yang Ingin Di Hapus: ");
+        hapusStock();
     }
 
-    public ArrayList<String> editStok(ArrayList<String> stokData){
-        showStok(stokData);
-        System.out.print("Masukan no data yang ingin di edit: ");
-        int indexData = input.nextInt();
-        System.out.print("Masukan nama data yang baru: ");
-        String dataBaru = input.nextLine();
-        System.out.print("Masukan harga barang yang baru: ");
-        int hargaBaru = input.nextInt();
-        System.out.print("Masukan stok barang yang baru: ");
-        int stokBaru = input.nextInt();
-        String editedData = formatData(dataBaru, hargaBaru, stokBaru);
-        stokData.set(indexData -1, editedData);
-        return stokData;
-
-    }
-
-    public ArrayList<String> hapusStok(ArrayList<String> stokData){
-        showStok(stokData);
-        System.out.print("Masukan nomor data yang ingin diedit: ");
-        int indexData = input.nextInt();
-        stokData.remove(indexData -1);
-        return stokData;
+    private void hapusStock() {
+        int indexData = input.nextInt() -1;
+        if(isIndexValid(fileStorageSystem.dataStock,indexData)){
+            fileStorageSystem.dataStock.remove(indexData);
+        }else{
+            System.out.println("Data Stok Yang Anda Pilih Tidak Tersedia !");
+ }
     }
 }
