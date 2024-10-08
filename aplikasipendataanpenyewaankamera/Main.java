@@ -50,6 +50,6 @@ public class Main {
         System.out.println("1. Admin");
         System.out.println("2. Pengguna");
         System.out.println("3. Keluar Menu");
-        System.out.print("Masukan Pilihan Anda : ");
+        System.out.print("Masukan Pilihan Anda :");
     }
 }
