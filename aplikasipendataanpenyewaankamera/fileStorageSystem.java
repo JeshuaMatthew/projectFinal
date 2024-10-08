@@ -13,6 +13,9 @@ public class fileStorageSystem {
     private File stockFile = new File("stockDirectory/stockRecords.txt");
     private File customerFile = new File("customerDirectory/customerRecords.txt");
 
+    public static ArrayList<String> dataStock = new ArrayList<>();
+    public static ArrayList<String> dataCustomer = new ArrayList<>();
+
 
     public ArrayList<String> getRecords(String fileName)throws IOException{
         FileInputStream ifstream = new FileInputStream(fileName);
@@ -65,4 +68,21 @@ public class fileStorageSystem {
         }
         ofstream.close();
     }
+
+    public static int getSpecificDataLocation(String data, int dataType){
+        int countCommas = 0;
+        int counter = 0;
+        while (countCommas != dataType){
+            if(data.charAt(counter) == '>'){
+                countCommas++;
+            }
+            counter++;
+        }
+        return counter;
+    }
+
+    public static String getSpecificData(String data, int dataLocation ) {
+        return data.substring(getSpecificDataLocation(data,dataLocation),getSpecificDataLocation(data,dataLocation + 1) -1);
+    }
+
 }
