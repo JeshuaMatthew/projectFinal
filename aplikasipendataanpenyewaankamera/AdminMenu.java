@@ -48,7 +48,6 @@ public class AdminMenu {
     }
 
     private void menuTambahStock(){
-        showStok();
         String formatedData = tambahStock();
         fileStorageSystem.dataStock.add(formatedData);
     }
@@ -125,6 +124,7 @@ public class AdminMenu {
         int indexData = input.nextInt() - 1;
         if(isIndexValid(fileStorageSystem.dataStock,indexData)){
             System.out.print("Masukan Nama Barang Yang Baru: ");
+            input.nextLine();
             String dataBaru = input.nextLine();
             System.out.print("Masukan Harga Sewa Barang Yang Baru: ");
             int hargaBaru = input.nextInt();
