@@ -18,8 +18,8 @@ public class customerMenu {
 
     public void bukaMenu(){
         while(true){
-        showMenu();
-        int pilihan = scanner.nextInt();
+            showMenu();
+            int pilihan = scanner.nextInt();
             switch (pilihan){
                 case 1:
                     showStockData();
