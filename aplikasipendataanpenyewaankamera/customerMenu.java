@@ -18,8 +18,8 @@ public class customerMenu {
 
     public void bukaMenu(){
         while(true){
-        showMenu();
-        int pilihan = scanner.nextInt();
+            showMenu();
+            int pilihan = scanner.nextInt();
             switch (pilihan){
                 case 1:
                     showStockData();
@@ -37,7 +37,7 @@ public class customerMenu {
 
     private void placeOrder(){
 
-        System.out.print("Masukan Nomor Kamera / Lensa Yang Ingin Di Sewa : ");
+        System.out.print("Masukan Nomor Baris Kamera / Lensa Yang Ingin Di Sewa : ");
         selectedIndex = scanner.nextInt() - 1;
         if (displayMessageIfNumberIsNotAvailable()) return;
 
